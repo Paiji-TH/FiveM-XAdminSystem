@@ -1,10 +1,10 @@
-C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\Source.dll
-C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\Source.pdb
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\CitizenFX.Server.dll
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\MySql.Data.dll
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\System.Buffers.dll
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\System.Runtime.InteropServices.RuntimeInformation.dll
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\System.Threading.Tasks.Extensions.dll
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\Source.csproj.CoreCompileInputs.cache
-C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\Source.dll
-C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\Source.pdb
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\XAdminSystem.net.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\XAdminSystem.net.pdb
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\XAdminSystem.net.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\XAdminSystem.net.pdb
