@@ -20,9 +20,13 @@ namespace XAdminSystem
         public static PlayerData lastJoinedPlayer;
         public int lastJoinReconnectCounter = 0;
         public Stopwatch lastJoinedStopWatch;
-        public static List<PlayerData> playerData = new List<PlayerData>();
+        public static List<PlayerData> players = new List<PlayerData>();
         public static List<ChatCommand> commands = new List<ChatCommand>();
+        public static List<Permission> permissions = new List<Permission>();
         public static List<Group> groups = new List<Group>();
+        public static List<Role> roles = new List<Role>();
+
+        public static bool whitelist_enabled = false;
 
         public Main()
         {
@@ -46,6 +50,9 @@ namespace XAdminSystem
             // Default Commands
             commands.Add(new Help());
 
+            // Default Permissions
+            permissions.Add(new Permission("asay"));
+
             // Main Event Listeners
             EventHandlers["playerConnecting"] += new Action<Player, string, CallbackDelegate>(PlayerConnected);
             EventHandlers["playerDropped"] += new Action<Player>(PlayerDisconnected);
@@ -68,8 +75,37 @@ namespace XAdminSystem
             EventHandlers.Add("xa:AddUserToGroup", new Action<PlayerData, Group>(AddUserToGroup));
         }
 
-        private void AddUserToGroup(PlayerData arg1, Group arg2)
+        #region Chat Messages
+        public static void AdminChatMessage(string message)
         {
+            foreach (PlayerData player in players)
+            {
+                if (player.hasPermission("asay"))
+                {
+                    player.SendMessage(message);
+                }
+            }
+        }
+
+        public static void BroadcastChatMessage(string message, string title = "")
+        {
+            foreach(PlayerData player in players)
+            {
+                player.SendMessage(message, title);
+            }
+        }
+
+        public static void ChatMessage(PlayerData player, string message, string title = "")
+        {
+            player.SendMessage(message, title);
+        }
+        #endregion 
+
+        #region Custom EventHandlers
+        private void AddUserToGroup(PlayerData player, Group group)
+        {
+            player.setUserGroup(group);
+            Console.WriteLine("\n "+ player.getUserName() +" was set to "+ group.getName() +" \n");
         }
 
         private void AddUserGroup(Group obj)
@@ -137,7 +173,9 @@ namespace XAdminSystem
         {
             Console.WriteLine("Player Connected -> " + obj.getUserName() + "["+ obj.getHandler().EndPoint.ToString() +" | "+ obj.getIdentifier() +"]");
         }
+        #endregion
 
+        #region Base EventHandlers
         /// <summary>
         /// This will be called when a player connects.
         /// </summary>
@@ -146,15 +184,43 @@ namespace XAdminSystem
         /// <param name="kickCallback"></param>
         private void PlayerConnected([FromSource]Player player, string playername, CallbackDelegate kickCallback)
         {
-            if(player.Identifiers["steam"] == null)
+            // Make sure that the Client has Steam enabled.
+            if (player.Identifiers["steam"] == null)
             {
                 player.Drop("STEAM CLIENT not detected, please start or restart your Steam Client to come back.");
                 API.CancelEvent();
                 return;
             }
 
+            // Make sure the client isn't banned.
+            AdminDB.isBanned(player, new Action<PlayerData, bool>((p, isBanned) => {
+                if(isBanned)
+                {
+                    AdminDB.getBannedMessage(player, true, true, new Action<PlayerData, string>((ply, message) =>
+                    {
+                        ply.getHandler().Drop(message);
+                        API.CancelEvent();
+                    }));
+
+                    return;
+                }
+            }));
+
+            if(whitelist_enabled)
+            {
+                AdminDB.isWhitelisted(player, new Action<PlayerData, bool>((ply, isWhitelisted) =>
+                {
+                    if (!isWhitelisted)
+                    {
+                        API.CancelEvent();
+                        return;
+                    }
+                }));
+            }
+
+            // Search the player.
             PlayerData joiningPlayer = null;
-            foreach(PlayerData ply in playerData)
+            foreach(PlayerData ply in players)
             {
                 if (ply.getIdentifier() == player.Identifiers["steam"])
                 {
@@ -171,7 +237,7 @@ namespace XAdminSystem
                     long seconds = lastJoinedStopWatch.ElapsedMilliseconds * 1000;
                     if (lastJoinReconnectCounter >= 5 && seconds < 5)
                     {
-                        lastJoinedPlayer.BanAsync("Reconnecting to quickly. Come back later.", "1h");
+                        lastJoinedPlayer.BanAsync(null, "Reconnecting to quickly. Come back later.", "1h");
                         lastJoinReconnectCounter = 0;
                     }
                     else
@@ -197,7 +263,7 @@ namespace XAdminSystem
             if (joiningPlayer == null)
             {
                 PlayerData ply = new PlayerData(player);
-                playerData.Add(ply);
+                players.Add(ply);
                 TriggerEvent("ax:PlayerConnected", ply);
             }
         }
@@ -210,12 +276,12 @@ namespace XAdminSystem
         {
 
             // Remove PlayerData from the list, so it clears memory for the server.
-            foreach(PlayerData ply in playerData)
+            foreach(PlayerData ply in players)
             {
                 if(ply.getIdentifier() == player.Identifiers["steam"])
                 {
                     TriggerEvent("ax:PlayerDisconnected", ply);
-                    playerData.Remove(ply);
+                    players.Remove(ply);
                     break;
                 }
             }
@@ -236,7 +302,7 @@ namespace XAdminSystem
 
             PlayerData player = null;
 
-            foreach(PlayerData ply in playerData)
+            foreach(PlayerData ply in players)
             {
                 if (ply.getIdentifier() == pl.Identifiers["steam"])
                 {
@@ -267,5 +333,6 @@ namespace XAdminSystem
             if (found != null)
                 TriggerEvent("ax:ChatInvalidCommand", found.getCommandText());
         }
+        #endregion
     }
 }

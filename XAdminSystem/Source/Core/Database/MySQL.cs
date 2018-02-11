@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
+using CitizenFX.Core;
 
 namespace XAdminSystem.Core.Database
 {
@@ -52,9 +53,9 @@ namespace XAdminSystem.Core.Database
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="parameters"></param>
-        public static async Task<DataTable> FetchAllAsync(string sql, Dictionary<string, string> parameters = null)
+        public static async void FetchAllAsync(string sql, Dictionary<string, string> parameters = null, Action<DataTable> callback = null)
         {
-            if (con == null || con.State == ConnectionState.Closed) return null;
+            if (con == null || con.State == ConnectionState.Closed) return;
 
             if(parameters != null)
             {
@@ -71,7 +72,8 @@ namespace XAdminSystem.Core.Database
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     DataTable data = new DataTable();
                     await adapter.FillAsync(data);
-                    return data;
+
+                    callback?.Invoke(data);
                 }
                 catch (MySqlException ex)
                 {
@@ -80,8 +82,6 @@ namespace XAdminSystem.Core.Database
                     Console.ResetColor();
                 }
             }
-
-            return null;
         }
     }
 }
