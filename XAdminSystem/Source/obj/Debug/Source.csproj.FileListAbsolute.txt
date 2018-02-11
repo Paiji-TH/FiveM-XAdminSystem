@@ -1,0 +1,11 @@
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\Source.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\Source.pdb
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\CitizenFX.Server.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\MySql.Data.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\System.Buffers.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Debug\Source.csprojResolveAssemblyReference.cache
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Debug\Source.csproj.CoreCompileInputs.cache
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Debug\Source.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Debug\Source.pdb

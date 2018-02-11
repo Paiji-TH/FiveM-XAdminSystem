@@ -7,8 +7,8 @@
     <ProjectGuid>{D08E2E2F-1AD7-4FA8-8414-13D3006D09B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Source</RootNamespace>
-    <AssemblyName>Source</AssemblyName>
+    <RootNamespace>XAdminSystem</RootNamespace>
+    <AssemblyName>XAdminSystem.net</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
