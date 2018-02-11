@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Commands\Help.cs" />
+    <Compile Include="Core\Database\AdminDB.cs" />
     <Compile Include="Core\Database\MySQL.cs" />
     <Compile Include="Core\Data\ChatCommand.cs" />
     <Compile Include="Core\Data\Group.cs" />

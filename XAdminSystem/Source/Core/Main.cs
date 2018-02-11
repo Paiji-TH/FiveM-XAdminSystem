@@ -10,6 +10,7 @@ using XAdminSystem.Core.Data;
 using System.Diagnostics;
 using XAdminSystem.Core.Commands;
 using System.Reflection;
+using XAdminSystem.Core.Database;
 
 namespace XAdminSystem
 {
@@ -27,6 +28,18 @@ namespace XAdminSystem
         {
             version = Assembly.GetExecutingAssembly().GetName().Version;
 
+            // Sub-Memory Scope.
+            {
+                string ipaddress = API.GetConvar("SQL_IPADDRESS", "127.0.0.1");
+                int portAddress = API.GetConvarInt("SQL_PORTADDRESS", 3306);
+                string username = API.GetConvar("SQL_USERNAME", "root");
+                string password = API.GetConvar("SQL_PASSWORD", "");
+                string database = API.GetConvar("SQL_DATABASE", "XAdminSystem");
+
+                Task task = MySQL.ConnectAsync(ipaddress, portAddress, username, password, database);
+                task.Start();
+            }
+            
             // Default Groups
             groups.Add(new Group("user", false));
 
@@ -133,12 +146,19 @@ namespace XAdminSystem
         /// <param name="kickCallback"></param>
         private void PlayerConnected([FromSource]Player player, string playername, CallbackDelegate kickCallback)
         {
-            bool found = false;
+            if(player.Identifiers["steam"] == null)
+            {
+                player.Drop("STEAM CLIENT not detected, please start or restart your Steam Client to come back.");
+                API.CancelEvent();
+                return;
+            }
+
+            PlayerData joiningPlayer = null;
             foreach(PlayerData ply in playerData)
             {
                 if (ply.getIdentifier() == player.Identifiers["steam"])
                 {
-                    found = true;
+                    joiningPlayer = ply;
                     break;
                 }
             }
@@ -174,7 +194,7 @@ namespace XAdminSystem
             lastJoinedStopWatch = new Stopwatch();
             lastJoinedStopWatch.Start();
 
-            if (!found)
+            if (joiningPlayer == null)
             {
                 PlayerData ply = new PlayerData(player);
                 playerData.Add(ply);
