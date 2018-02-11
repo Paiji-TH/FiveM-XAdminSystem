@@ -83,5 +83,15 @@ namespace XAdminSystem.Core.Database
                 }
             }
         }
+
+        public static MySqlConnection getSQL()
+        {
+            return con;
+        }
+
+        public static bool isConnected()
+        {
+            return con.Ping();
+        }
     }
 }

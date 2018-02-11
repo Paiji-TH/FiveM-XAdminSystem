@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using MySql.Data.MySqlClient;
 using XAdminSystem.Core.Data;
 using System.Diagnostics;
 using XAdminSystem.Core.Commands;
-using System.Reflection;
 using XAdminSystem.Core.Database;
 
 namespace XAdminSystem
@@ -30,7 +27,7 @@ namespace XAdminSystem
 
         public Main()
         {
-            version = Assembly.GetExecutingAssembly().GetName().Version;
+            version = new Version(1, 0, 1, 4);
 
             // Sub-Memory Scope.
             {
@@ -54,6 +51,7 @@ namespace XAdminSystem
             permissions.Add(new Permission("asay"));
 
             // Main Event Listeners
+            //EventHandlers["onResourceStart"] += new Action<string>(InitializeResource);
             EventHandlers["playerConnecting"] += new Action<Player, string, CallbackDelegate>(PlayerConnected);
             EventHandlers["playerDropped"] += new Action<Player>(PlayerDisconnected);
             EventHandlers["chatMessage"] += new Action<Player, string, string>(OnPlayerText);
@@ -176,6 +174,47 @@ namespace XAdminSystem
         #endregion
 
         #region Base EventHandlers
+
+        /// <summary>
+        /// This is ran when a resource is ran.
+        /// </summary>
+        /// <param name="resourceName"></param>
+        private void InitializeResource(string resourceName)
+        {
+            if (resourceName == "XAdminSystem")
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("+======================================+");
+                Console.WriteLine("             XAdminSystem!");
+                Console.WriteLine("Created by xrayhunter");
+                Console.WriteLine("Version: " + version.ToString());
+                Console.WriteLine("Commands Loaded: " + commands.Count);
+                Console.WriteLine("Permissions Loaded: " + permissions.Count);
+                Console.WriteLine("Groups Loaded: " + groups.Count);
+                Console.WriteLine("Roles Loaded: " + roles.Count);
+                Console.WriteLine("========================================");
+                Console.WriteLine("                 MYSQL:");
+                if (MySQL.isConnected())
+                {
+                    Console.WriteLine("MySQL is connected...");
+                    Console.WriteLine("MySQL Version: " + MySQL.getSQL().ServerVersion.ToString());
+                    Console.WriteLine("MySQL Database: " + MySQL.getSQL().Database.ToString());
+#if DEBUG
+                    Console.WriteLine("MySQL Connection String: " + MySQL.getSQL().ConnectionString.ToString());
+#endif
+                }
+                else
+                {
+                    Console.WriteLine("MySQL has failed to connect...");
+#if DEBUG
+                    Console.WriteLine("MySQL Connection String: " + MySQL.getSQL().ConnectionString.ToString());
+#endif
+                }
+                Console.WriteLine("+======================================+");
+                Console.ResetColor();
+            }
+        }
+
         /// <summary>
         /// This will be called when a player connects.
         /// </summary>
@@ -218,19 +257,18 @@ namespace XAdminSystem
                 }));
             }
 
-            // Search the player.
-            PlayerData joiningPlayer = null;
-            foreach(PlayerData ply in players)
+            void clearStopWatch()
             {
-                if (ply.getIdentifier() == player.Identifiers["steam"])
-                {
-                    joiningPlayer = ply;
-                    break;
-                }
+                // Clear Memory, if necessary.
+                if (lastJoinedStopWatch != null)
+                    lastJoinedStopWatch.Reset();
+
+                lastJoinedStopWatch = new Stopwatch();
+                lastJoinedStopWatch.Start();
             }
 
             // Kicks player for spam reconnecting.
-            if(lastJoinedPlayer != null)
+            if (lastJoinedPlayer != null)
             {
                 if (lastJoinedPlayer.getIdentifier() == player.Identifiers["steam"])
                 {
@@ -239,6 +277,10 @@ namespace XAdminSystem
                     {
                         lastJoinedPlayer.BanAsync(null, "Reconnecting to quickly. Come back later.", "1h");
                         lastJoinReconnectCounter = 0;
+
+                        clearStopWatch();
+                        API.CancelEvent();
+                        return;
                     }
                     else
                     {
@@ -250,16 +292,24 @@ namespace XAdminSystem
                     lastJoinReconnectCounter = 0;
                 }
             }
+            
+            if (lastJoinedPlayer.getIPAddress() != player.EndPoint || lastJoinedPlayer.getUserName() != player.Name || lastJoinedPlayer.getIdentifier() != player.Identifiers["steam"])
+            {
+                lastJoinedPlayer = new PlayerData(player);
+                clearStopWatch();
+            }
 
-            lastJoinedPlayer = new PlayerData(player);
-
-            // Clear Memory, if necessary.
-            if (lastJoinedStopWatch != null)
-                lastJoinedStopWatch.Reset();
-
-            lastJoinedStopWatch = new Stopwatch();
-            lastJoinedStopWatch.Start();
-
+            // Search the player.
+            PlayerData joiningPlayer = null;
+            foreach(PlayerData ply in players)
+            {
+                if (ply.getIdentifier() == player.Identifiers["steam"])
+                {
+                    joiningPlayer = ply;
+                    break;
+                }
+            }
+            
             if (joiningPlayer == null)
             {
                 PlayerData ply = new PlayerData(player);
@@ -333,6 +383,6 @@ namespace XAdminSystem
             if (found != null)
                 TriggerEvent("ax:ChatInvalidCommand", found.getCommandText());
         }
-        #endregion
+#endregion
     }
 }

@@ -170,12 +170,14 @@ namespace XAdminSystem.Core.Data
                 {
                     DataRow row = data.Rows[0];
 
+                    this.originalUserName = row["USERNAME"].ToString();
+
                     {
                         List<string> names = (List<string>)JsonConvert.DeserializeObject(row[2].ToString());
 
                         if(names[0] != this.getUserName())
                         {
-                            
+                            Main.AdminChatMessage(this.getUserName() + " original alias is " + this.originalUserName);
                         }
                     }
 
@@ -191,9 +193,7 @@ namespace XAdminSystem.Core.Data
                         }
                     }
                     #endregion
-
-
-
+                    
                 }
             }));
         }

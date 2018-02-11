@@ -8,3 +8,6 @@ C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\XA
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\XAdminSystem.net.pdb
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\XAdminSystem.net.dll
 C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\XAdminSystem.net.pdb
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\Newtonsoft.Json.dll
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\bin\Release\Newtonsoft.Json.xml
+C:\Users\user\Source\Repos\FiveM-XAdminSystem\XAdminSystem\Source\obj\Release\Source.csprojResolveAssemblyReference.cache

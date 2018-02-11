@@ -160,11 +160,27 @@ namespace XAdminSystem.Core.Database
 
         public static PlayerData findPlayerData(Player player)
         {
-            foreach(PlayerData data in Main.players)
+            return findPlayerData(player.Handle, false);
+        }
+
+        public static PlayerData findPlayerData(string player, bool isUsername)
+        {
+            foreach (PlayerData data in Main.players)
             {
-                if (data.getIdentifier() == player.Identifiers["steam"])
+                if(isUsername)
                 {
-                    return data;
+
+                    if (data.getUserName() == player)
+                    {
+                        return data;
+                    }
+                }
+                else
+                {
+                    if (data.getHandler().Handle == player)
+                    {
+                        return data;
+                    }
                 }
             }
 
