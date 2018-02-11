@@ -75,27 +75,26 @@ namespace XAdminSystem.Core.Data
                 dateYears.ForEach((years) => expireDate.AddYears(Convert.ToInt32(years)));
             }
             
-            tags.Add("@expireDate", (timeString == "perma" ? "perma" : expireDate.ToString()));
+            tags.Add("@releaseDate", (timeString == "perma" ? "perma" : expireDate.ToString()));
 
-            tags.Add("@createdDate", DateTime.Now.ToString());
+            tags.Add("@creationDate", DateTime.Now.ToString());
 
             await MySQL.ExecuteSQLAsync(@"
                 INSERT INTO bans 
                 (
                     BANNED_PID,
                     BANNER_PID,
+                    REASON,
                     RELEASE_DATE,
                     CREATION_DATE
                 ) 
                 VALUES 
                 (
-                    '@bannedID', 
-                    '@bannerID', 
+                    '@bannedID',
+                    '@bannerID',
                     '@reason',
-                    '@expireDate',
-                    '@createdDate',
-                    '@bannedUserName',
-                    '@bannerUserName'
+                    '@releaseDate',
+                    '@creationDate'
                 );", tags);
 
             this.Kick(reason);

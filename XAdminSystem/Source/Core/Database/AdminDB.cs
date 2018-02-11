@@ -31,6 +31,7 @@ namespace XAdminSystem.Core.Database
                     ID INT(11) NOT NULL AUTO_INCREMENT,
                     BANNED_PID INT(11) NOT NULL,
                     BANNER_PID INT(11) NOT NULL,
+                    REASON TEXT NOT NULL,
                     RELEASE_DATE TEXT NOT NULL,
                     CREATION_DATE TEXT NOT NULL,
                     PRIMARY KEY(ID)
@@ -108,9 +109,6 @@ namespace XAdminSystem.Core.Database
 
         public static void isWhitelisted(Player player, Action<PlayerData, bool> callback)
         {
-            /// TODO: Check if is whitelisted.
-            /// 
-
             PlayerData ply = findPlayerData(player);
 
             if (ply != null)
@@ -132,9 +130,16 @@ namespace XAdminSystem.Core.Database
 
         public static void getBannedMessage(Player player, bool withDate, bool withBannersName, Action<PlayerData, string> callback)
         {
-            string message = "";
-            /// TODO: Receive the Banned Message.
-            
+            PlayerData ply = findPlayerData(player);
+
+            MySQL.FetchAllAsync("SELECT * FROM bans WHERE BANNED_PID = '" + ply.getUID() + "'", new Dictionary<string, string>(), new Action<DataTable>((data) =>
+            {
+                if(data.Rows.Count > 0)
+                {
+                    DataRow row = data.Rows[0];
+                    callback?.Invoke(ply, row["REASON"].ToString());
+                }
+            }));
         }
 
         public static void getBannedMessage(PlayerData player, bool withDate, bool withBannersName, Action<PlayerData, string> callback)
